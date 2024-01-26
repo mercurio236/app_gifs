@@ -59,8 +59,48 @@ class _HomeState extends State<Home> {
                   border: OutlineInputBorder()),
               style: TextStyle(color: Colors.white, fontSize: 18),
               textAlign: TextAlign.center),
-        )
+        ),
+        Expanded(
+            child: FutureBuilder(
+          future: _getGifs(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+              case ConnectionState.none:
+                return Container(
+                    width: 200,
+                    height: 2000,
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 5,
+                    ));
+              default:
+                if (snapshot.hasError)
+                  return Container();
+                else
+                  return _createGiftTable(context, snapshot);
+            }
+          },
+        ))
       ]),
     );
   }
+}
+
+Widget _createGiftTable(BuildContext context, AsyncSnapshot snapshot) {
+  return GridView.builder(
+      padding: EdgeInsets.all(10),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+      itemCount: snapshot.data['data'].length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: Image.network(
+            snapshot.data['data'][index]['images']['fixed_height']['url'],
+            height: 300,
+            fit: BoxFit.cover,
+          ),
+        );
+      });
 }
