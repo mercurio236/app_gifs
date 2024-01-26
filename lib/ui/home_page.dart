@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_gifs/ui/gif_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -52,11 +53,11 @@ class _HomeState extends State<Home> {
         Padding(
           padding: EdgeInsets.all(10),
           child: TextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 labelText: 'Pesquise aqui',
                 labelStyle: TextStyle(color: Colors.white),
                 border: OutlineInputBorder()),
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: const TextStyle(color: Colors.white, fontSize: 18),
             textAlign: TextAlign.center,
             onSubmitted: (text) {
               setState(() {
@@ -77,7 +78,7 @@ class _HomeState extends State<Home> {
                     width: 200,
                     height: 2000,
                     alignment: Alignment.center,
-                    child: CircularProgressIndicator(
+                    child: const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       strokeWidth: 5,
                     ));
@@ -104,7 +105,7 @@ class _HomeState extends State<Home> {
   Widget _createGiftTable(BuildContext context, AsyncSnapshot snapshot) {
     return GridView.builder(
         padding: EdgeInsets.all(10),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
         itemCount: _getCount(snapshot.data['data']),
         itemBuilder: (context, index) {
@@ -115,11 +116,18 @@ class _HomeState extends State<Home> {
                 height: 300,
                 fit: BoxFit.cover,
               ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            GifPage(snapshot.data['data'][index])));
+              },
             );
           } else {
             return Container(
               child: GestureDetector(
-                child: Column(
+                child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(

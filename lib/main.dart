@@ -1,3 +1,4 @@
+import 'package:app_gifs/ui/gif_page.dart';
 import 'package:app_gifs/ui/home_page.dart';
 import 'package:flutter/material.dart';
 
