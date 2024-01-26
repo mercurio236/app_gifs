@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -34,13 +34,33 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    _getGifs().then((map){
+    _getGifs().then((map) {
       print(map);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Image.network(
+            'https://developers.giphy.com/branch/master/static/header-logo-0fec0225d189bc0eae27dac3e3770582.gif'),
+        centerTitle: true,
+      ),
+      backgroundColor: Colors.black,
+      body: Column(children: [
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: TextField(
+              decoration: InputDecoration(
+                  labelText: 'Pesquise aqui',
+                  labelStyle: TextStyle(color: Colors.white),
+                  border: OutlineInputBorder()),
+              style: TextStyle(color: Colors.white, fontSize: 18),
+              textAlign: TextAlign.center),
+        )
+      ]),
+    );
   }
 }
