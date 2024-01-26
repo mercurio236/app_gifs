@@ -16,14 +16,13 @@ class _HomeState extends State<Home> {
 
   Future<Map<String, dynamic>> _getGifs() async {
     http.Response response;
-    //final response = await http.get(Uri.parse(gifUrl));
 
     if (_search == null) {
       response = await http.get(Uri.parse(
           'https://api.giphy.com/v1/gifs/trending?api_key=aS7QKRwUHahQFoyFfjUpRRbUFDn3Bg0r&limit=20&offset=0&rating=g&bundle=messaging_non_clips'));
     } else {
       response = await http.get(Uri.parse(
-          'https://api.giphy.com/v1/gifs/search?api_key=aS7QKRwUHahQFoyFfjUpRRbUFDn3Bg0r&q=$_search&limit=20&offset=$_offset&rating=g&lang=en&bundle=messaging_non_clips'));
+          'https://api.giphy.com/v1/gifs/search?api_key=aS7QKRwUHahQFoyFfjUpRRbUFDn3Bg0r&q=$_search&limit=19&offset=$_offset&rating=g&lang=en&bundle=messaging_non_clips'));
     }
 
     return json.decode(response.body);
@@ -53,12 +52,19 @@ class _HomeState extends State<Home> {
         Padding(
           padding: EdgeInsets.all(10),
           child: TextField(
-              decoration: InputDecoration(
-                  labelText: 'Pesquise aqui',
-                  labelStyle: TextStyle(color: Colors.white),
-                  border: OutlineInputBorder()),
-              style: TextStyle(color: Colors.white, fontSize: 18),
-              textAlign: TextAlign.center),
+            decoration: InputDecoration(
+                labelText: 'Pesquise aqui',
+                labelStyle: TextStyle(color: Colors.white),
+                border: OutlineInputBorder()),
+            style: TextStyle(color: Colors.white, fontSize: 18),
+            textAlign: TextAlign.center,
+            onSubmitted: (text) {
+              setState(() {
+                _search = text;
+                _offset = 0;
+              });
+            },
+          ),
         ),
         Expanded(
             child: FutureBuilder(
@@ -86,21 +92,55 @@ class _HomeState extends State<Home> {
       ]),
     );
   }
-}
 
-Widget _createGiftTable(BuildContext context, AsyncSnapshot snapshot) {
-  return GridView.builder(
-      padding: EdgeInsets.all(10),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
-      itemCount: snapshot.data['data'].length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          child: Image.network(
-            snapshot.data['data'][index]['images']['fixed_height']['url'],
-            height: 300,
-            fit: BoxFit.cover,
-          ),
-        );
-      });
+  int _getCount(List data) {
+    if (_search == null) {
+      return data.length;
+    } else {
+      return data.length + 1;
+    }
+  }
+
+  Widget _createGiftTable(BuildContext context, AsyncSnapshot snapshot) {
+    return GridView.builder(
+        padding: EdgeInsets.all(10),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+        itemCount: _getCount(snapshot.data['data']),
+        itemBuilder: (context, index) {
+          if (_search == null || index < snapshot.data['data'].length) {
+            return GestureDetector(
+              child: Image.network(
+                snapshot.data['data'][index]['images']['fixed_height']['url'],
+                height: 300,
+                fit: BoxFit.cover,
+              ),
+            );
+          } else {
+            return Container(
+              child: GestureDetector(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 70,
+                    ),
+                    Text(
+                      'Carregar mais...',
+                      style: TextStyle(color: Colors.white, fontSize: 22),
+                    )
+                  ],
+                ),
+                onTap: () {
+                  setState(() {
+                    _offset += 19;
+                  });
+                },
+              ),
+            );
+          }
+        });
+  }
 }
